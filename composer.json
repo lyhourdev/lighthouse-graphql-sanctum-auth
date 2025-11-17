@@ -1,0 +1,81 @@
+{
+    "name": "leap-lyhour/lighthouse-graphql-sanctum-auth",
+    "description": "Enterprise-grade Laravel Package for Lighthouse GraphQL with Sanctum Authentication, Spatie Permissions, Multi-Tenancy, 2FA, and Audit Logging",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "graphql",
+        "lighthouse",
+        "sanctum",
+        "authentication",
+        "multi-tenant",
+        "permissions",
+        "2fa",
+        "enterprise",
+        "api",
+        "security",
+        "authorization",
+        "rbac",
+        "audit",
+        "device-management"
+    ],
+    "authors": [
+        {
+            "name": "Leap Lyhour",
+            "email": "leaplyhour2013@gmail.com"
+        }
+    ],
+    "homepage": "https://github.com/lyhourdev/lighthouse-graphql-sanctum-auth",
+    "support": {
+        "issues": "https://github.com/lyhourdev/lighthouse-graphql-sanctum-auth/issues",
+        "source": "https://github.com/lyhourdev/lighthouse-graphql-sanctum-auth"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lyhourdev/lighthouse-graphql-sanctum-auth"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.2",
+        "nuwave/lighthouse": "^6.63",
+        "spatie/laravel-permission": "^6.23"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.1",
+        "pestphp/pest-plugin-laravel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LeapLyhour\\LighthouseGraphQLSanctumAuth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LeapLyhour\\LighthouseGraphQLSanctumAuth\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LeapLyhour\\LighthouseGraphQLSanctumAuth\\Providers\\LighthouseGraphQLSanctumAuthServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "test-coverage": "pest --coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
+

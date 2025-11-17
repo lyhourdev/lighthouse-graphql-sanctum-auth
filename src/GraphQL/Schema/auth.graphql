@@ -1,0 +1,64 @@
+# Authentication Schema
+# Schema Authentication
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    email_verified_at: DateTime
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type AuthPayload {
+    user: User!
+    token: String!
+    token_type: String!
+}
+
+type RefreshTokenPayload {
+    user: User!
+    token: String!
+    token_type: String!
+}
+
+type Query {
+    """
+    Get the currently authenticated user.
+    ទទួល user ដែលបាន authenticate បច្ចុប្បន្ន។
+    """
+    me: User
+        @auth
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Queries\\Me")
+}
+
+type Mutation {
+    """
+    Authenticate a user and return an access token.
+    Authenticate user និងត្រឡប់ access token។
+    """
+    login(
+        email: String!
+        password: String!
+        device_name: String
+    ): AuthPayload!
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\Login")
+
+    """
+    Refresh an access token using a refresh token.
+    ធ្វើឱ្យ access token ថ្មីដោយប្រើ refresh token។
+    """
+    refreshToken(
+        refresh_token: String!
+    ): RefreshTokenPayload!
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\RefreshToken")
+
+    """
+    Logout the current user and revoke all tokens.
+    Logout user បច្ចុប្បន្ន និងលុប tokens ទាំងអស់។
+    """
+    logout: Boolean!
+        @auth
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\Logout")
+}
+

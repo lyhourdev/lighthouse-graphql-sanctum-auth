@@ -1,0 +1,228 @@
+# Permissions Schema
+# Schema Permissions
+
+type Role {
+    id: ID!
+    name: String!
+    guard_name: String!
+    created_at: DateTime
+    updated_at: DateTime
+    permissions: [Permission!]! @hasMany
+    users: [User!]! @belongsToMany
+}
+
+type Permission {
+    id: ID!
+    name: String!
+    guard_name: String!
+    created_at: DateTime
+    updated_at: DateTime
+    roles: [Role!]! @belongsToMany
+    users: [User!]! @belongsToMany
+}
+
+extend type User {
+    roles: [Role!]! @belongsToMany
+    permissions: [Permission!]! @belongsToMany
+}
+
+type Query {
+    """
+    Get all roles.
+    ទទួល roles ទាំងអស់។
+    """
+    roles: [Role!]!
+        @all(model: "Spatie\\Permission\\Models\\Role")
+        @auth
+        @hasPermission(permission: "view roles")
+
+    """
+    Get a specific role by ID.
+    ទទួល role ជាក់លាក់តាម ID។
+    """
+    role(id: ID! @eq): Role
+        @find(model: "Spatie\\Permission\\Models\\Role")
+        @auth
+        @hasPermission(permission: "view roles")
+
+    """
+    Get all permissions.
+    ទទួល permissions ទាំងអស់។
+    """
+    permissions: [Permission!]!
+        @all(model: "Spatie\\Permission\\Models\\Permission")
+        @auth
+        @hasPermission(permission: "view permissions")
+
+    """
+    Get a specific permission by ID.
+    ទទួល permission ជាក់លាក់តាម ID។
+    """
+    permission(id: ID! @eq): Permission
+        @find(model: "Spatie\\Permission\\Models\\Permission")
+        @auth
+        @hasPermission(permission: "view permissions")
+
+    """
+    Get roles for the authenticated user.
+    ទទួល roles សម្រាប់ user ដែលបាន authenticate។
+    """
+    myRoles: [Role!]!
+        @auth
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Queries\\MyRoles")
+
+    """
+    Get permissions for the authenticated user.
+    ទទួល permissions សម្រាប់ user ដែលបាន authenticate។
+    """
+    myPermissions: [Permission!]!
+        @auth
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Queries\\MyPermissions")
+}
+
+type Mutation {
+    """
+    Assign a role to a user.
+    ផ្តល់ role ទៅ user។
+    """
+    assignRole(
+        user_id: ID!
+        role_id: ID!
+    ): User!
+        @auth
+        @hasPermission(permission: "assign roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\AssignRole")
+
+    """
+    Remove a role from a user.
+    ដក role ពី user។
+    """
+    removeRole(
+        user_id: ID!
+        role_id: ID!
+    ): User!
+        @auth
+        @hasPermission(permission: "remove roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\RemoveRole")
+
+    """
+    Assign a permission to a user.
+    ផ្តល់ permission ទៅ user។
+    """
+    assignPermission(
+        user_id: ID!
+        permission_id: ID!
+    ): User!
+        @auth
+        @hasPermission(permission: "assign permissions")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\AssignPermission")
+
+    """
+    Remove a permission from a user.
+    ដក permission ពី user។
+    """
+    removePermission(
+        user_id: ID!
+        permission_id: ID!
+    ): User!
+        @auth
+        @hasPermission(permission: "remove permissions")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\RemovePermission")
+
+    """
+    Give a permission to a role.
+    ផ្តល់ permission ទៅ role។
+    """
+    givePermissionToRole(
+        role_id: ID!
+        permission_id: ID!
+    ): Role!
+        @auth
+        @hasPermission(permission: "manage roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\GivePermissionToRole")
+
+    """
+    Revoke a permission from a role.
+    ដក permission ពី role។
+    """
+    revokePermissionFromRole(
+        role_id: ID!
+        permission_id: ID!
+    ): Role!
+        @auth
+        @hasPermission(permission: "manage roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\RevokePermissionFromRole")
+
+    """
+    Create a new role.
+    បង្កើត role ថ្មី។
+    """
+    createRole(
+        name: String!
+        guard_name: String = "web"
+    ): Role!
+        @auth
+        @hasPermission(permission: "create roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\CreateRole")
+
+    """
+    Update a role.
+    ធ្វើបច្ចុប្បន្នភាព role។
+    """
+    updateRole(
+        id: ID!
+        name: String
+        guard_name: String
+    ): Role!
+        @auth
+        @hasPermission(permission: "update roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\UpdateRole")
+
+    """
+    Delete a role.
+    លុប role។
+    """
+    deleteRole(
+        id: ID!
+    ): Boolean!
+        @auth
+        @hasPermission(permission: "delete roles")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\DeleteRole")
+
+    """
+    Create a new permission.
+    បង្កើត permission ថ្មី។
+    """
+    createPermission(
+        name: String!
+        guard_name: String = "web"
+    ): Permission!
+        @auth
+        @hasPermission(permission: "create permissions")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\CreatePermission")
+
+    """
+    Update a permission.
+    ធ្វើបច្ចុប្បន្នភាព permission។
+    """
+    updatePermission(
+        id: ID!
+        name: String
+        guard_name: String
+    ): Permission!
+        @auth
+        @hasPermission(permission: "update permissions")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\UpdatePermission")
+
+    """
+    Delete a permission.
+    លុប permission។
+    """
+    deletePermission(
+        id: ID!
+    ): Boolean!
+        @auth
+        @hasPermission(permission: "delete permissions")
+        @field(resolver: "LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Mutations\\DeletePermission")
+}
+
