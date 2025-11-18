@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace LeapLyhour\LighthouseGraphQLSanctumAuth\Providers;
 
+use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
 use Illuminate\Support\ServiceProvider;
 use Nuwave\Lighthouse\Events\RegisterDirectiveNamespaces;
 
 /**
  * Service Provider for Lighthouse GraphQL Sanctum Auth Package
- * 
+ *
  * សេវាផ្តល់សម្រាប់ package Lighthouse GraphQL Sanctum Auth
- * 
+ *
  * This provider registers all package services, directives, and configurations.
  * សេវានេះចុះឈ្មោះ services, directives, និង configurations ទាំងអស់នៃ package។
  */
@@ -35,23 +36,23 @@ final class LighthouseGraphQLSanctumAuthServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      * ចាប់ផ្តើម services ណាមួយនៃ application។
      */
-    public function boot(): void
+    public function boot(EventsDispatcher $dispatcher): void
     {
         $this->publishConfig();
         $this->publishMigrations();
         $this->loadGraphQLSchemas();
-        $this->registerDirectiveNamespace();
+        $this->registerDirectiveNamespace($dispatcher);
     }
 
     /**
      * Register custom GraphQL directives namespace.
      * ចុះឈ្មោះ namespace នៃ GraphQL directives ផ្ទាល់ខ្លួន។
      */
-    private function registerDirectiveNamespace(): void
+    private function registerDirectiveNamespace(EventsDispatcher $dispatcher): void
     {
-        $this->app['events']->listen(
+        $dispatcher->listen(
             RegisterDirectiveNamespaces::class,
-            fn (): string => 'LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Directives'
+            static fn (): string => 'LeapLyhour\\LighthouseGraphQLSanctumAuth\\GraphQL\\Directives'
         );
     }
 
@@ -101,19 +102,18 @@ final class LighthouseGraphQLSanctumAuthServiceProvider extends ServiceProvider
         // Lighthouse v6 uses a single schema_path or array of paths
         // Lighthouse v6 ប្រើ schema_path តែមួយ ឬ array នៃ paths
         $currentSchemaPath = config('lighthouse.schema_path', base_path('graphql/schema.graphql'));
-        
+
         // Convert to array if it's a string
         // បម្លែងទៅ array ប្រសិនបើវាជា string
         $schemaPaths = is_array($currentSchemaPath) ? $currentSchemaPath : [$currentSchemaPath];
-        
+
         // Add our package schema directory
         // បន្ថែម schema directory នៃ package របស់យើង
         $packageSchemaPath = __DIR__.'/../GraphQL/Schema';
-        
+
         if (is_dir($packageSchemaPath)) {
             $schemaPaths[] = $packageSchemaPath;
             $this->app['config']->set('lighthouse.schema_path', $schemaPaths);
         }
     }
 }
-
